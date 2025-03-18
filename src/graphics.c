@@ -5,29 +5,28 @@
 #include "../include/config.h"
 #include "../include/game.h"
 
-void render_projectiles(GameState *game) {
-    for (int i = 0; i < MAX_PROJECTILES; i++) {
-        if (game->projectiles[i].active) {
+void render_projectiles(GameState *game)
+{
+    for (int i = 0; i < MAX_PROJECTILES; i++)
+    {
+        if (game->projectiles[i].active)
+        {
             // Define a cor específica para cada tipo de projétil
-            SDL_Color color = game->projectiles[i].is_enemy ? 
-                game->projectiles[i].color : 
-                (SDL_Color){255, 255, 0, 255}; // Amarelo para jogador
+            SDL_Color color = game->projectiles[i].is_enemy ? game->projectiles[i].color : (SDL_Color){255, 255, 0, 255}; // Amarelo para jogador
 
             SDL_SetRenderDrawColor(
                 game->renderer,
                 color.r,
                 color.g,
                 color.b,
-                color.a
-            );
+                color.a);
 
             SDL_Rect proj_rect = {
                 game->projectiles[i].x - game->projectiles[i].radius,
                 game->projectiles[i].y - game->projectiles[i].radius,
                 game->projectiles[i].radius * 2,
-                game->projectiles[i].radius * 2
-            };
-            
+                game->projectiles[i].radius * 2};
+
             SDL_RenderFillRect(game->renderer, &proj_rect);
         }
     }
@@ -204,22 +203,24 @@ void render_game_over(GameState *game)
 
     // Opções
     const char *options[] = {"Reiniciar", "Menu Principal", "Sair"};
-    int y_pos = 400;
+    const int option_spacing = 70;
+    int y_pos = 400; // Ajuste conforme necessário
 
     for (int i = 0; i < 3; i++)
     {
-        SDL_Color text_color = (i == game->selected_menu_option) ? color : (SDL_Color){150, 150, 150, 255};
+        SDL_Color text_color = (i == game->selected_menu_option) ? (SDL_Color){255, 255, 255, 255} : (SDL_Color){150, 150, 150, 255};
 
         SDL_Surface *option_surface = TTF_RenderText_Blended(game->font, options[i], text_color);
         SDL_Texture *option_texture = SDL_CreateTextureFromSurface(game->renderer, option_surface);
+
         SDL_Rect option_rect = {
-            (game->current_width - option_surface->w) / 2,
+            (game->current_width - option_surface->w) / 2, // Centralizado X
             y_pos,
             option_surface->w,
             option_surface->h};
 
         SDL_RenderCopy(game->renderer, option_texture, NULL, &option_rect);
-        y_pos += 70;
+        y_pos += option_spacing;
 
         SDL_FreeSurface(option_surface);
         SDL_DestroyTexture(option_texture);

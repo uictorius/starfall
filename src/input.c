@@ -4,33 +4,56 @@
 #include "audio.h"
 #include <math.h>
 
-void handle_game_over_selection(GameState *game) {
-    switch(game->selected_menu_option) {
-        case 0: // Reiniciar
-            game->current_state = GAME_STATE_PLAYING;
-            reset_game(game);
-            break;
-        case 1: // Menu
-            game->current_state = GAME_STATE_MENU;
-            break;
-        case 2: // Sair
-            game->running = false;
-            break;
+void handle_game_over_selection(GameState *game)
+{
+    switch (game->selected_menu_option)
+    {
+    case 0: // Reiniciar
+        game->current_state = GAME_STATE_PLAYING;
+        reset_game(game);
+        break;
+    case 1: // Menu
+        game->current_state = GAME_STATE_MENU;
+        break;
+    case 2: // Sair
+        game->running = false;
+        break;
     }
 }
 
-void handle_game_over_mouse(GameState *game, int mouseY) {
-    // Implemente a lógica de clique do mouse para game over
-    if(mouseY > 300 && mouseY < 400) { // Exemplo
+void handle_game_over_mouse(GameState *game, int mouseX, int mouseY)
+{
+    // Conversão para coordenadas lógicas (float)
+    float logicalX, logicalY;
+    SDL_RenderWindowToLogical(
+        game->renderer,
+        mouseX,
+        mouseY,
+        &logicalX,
+        &logicalY);
+
+    // Ajuste nas verificações usando coordenadas float
+    const float option_y_start = 400.0f;
+    const float option_height = 70.0f;
+
+    if (logicalY >= option_y_start && logicalY < option_y_start + option_height)
+    {
         game->selected_menu_option = 0;
         handle_game_over_selection(game);
     }
-    else if(mouseY > 400 && mouseY < 500) {
+    else if (logicalY >= option_y_start + option_height &&
+             logicalY < option_y_start + 2 * option_height)
+    {
         game->selected_menu_option = 1;
         handle_game_over_selection(game);
     }
+    else if (logicalY >= option_y_start + 2 * option_height &&
+             logicalY < option_y_start + 3 * option_height)
+    {
+        game->selected_menu_option = 2;
+        handle_game_over_selection(game);
+    }
 }
-
 
 void handle_input(GameState *game)
 {
@@ -173,7 +196,7 @@ void handle_game_over_input(GameState *game, SDL_Event *event)
     case SDL_MOUSEBUTTONDOWN:
         int mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
-        handle_game_over_mouse(game, mouseY);
+        handle_game_over_mouse(game, mouseX, mouseY);
         break;
     }
 }

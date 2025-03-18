@@ -10,6 +10,6 @@ void handle_playing_input(GameState *game, SDL_Event *event);
 void handle_menu_input(GameState *game, SDL_Event *event);
 void handle_game_over_input(GameState *game, SDL_Event *event);
 void handle_game_over_selection(GameState *game);
-void handle_game_over_mouse(GameState *game, int mouseY);
+void handle_game_over_mouse(GameState *game, int mouseX, int mouseY);
 
 #endif
