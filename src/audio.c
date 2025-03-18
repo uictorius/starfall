@@ -24,12 +24,11 @@ int init_audio()
     Mix_AllocateChannels(32);
     return 1;
 }
-
 void load_sounds(GameState *game)
 {
     char *base_path = SDL_GetBasePath();
 
-    // Carrega som de laser
+    // Carrega som de laser (volume mais baixo)
     char path[1024];
     snprintf(path, sizeof(path), "%sassets/sounds/projectiles.wav", base_path);
     game->sounds.laser_sound = Mix_LoadWAV(path);
@@ -37,21 +36,33 @@ void load_sounds(GameState *game)
     {
         printf("Erro ao carregar som de laser: %s\n", Mix_GetError());
     }
+    else
+    {
+        Mix_VolumeChunk(game->sounds.laser_sound, 40);
+    }
 
-    // Carrega som de explosão
+    // Carrega som de explosão (volume médio)
     snprintf(path, sizeof(path), "%sassets/sounds/explosion.wav", base_path);
     game->sounds.explosion_sound = Mix_LoadWAV(path);
     if (!game->sounds.explosion_sound)
     {
         printf("Erro ao carregar som de explosão: %s\n", Mix_GetError());
     }
+    else
+    {
+        Mix_VolumeChunk(game->sounds.explosion_sound, 82);
+    }
 
-    // Carrega som de laser do inimigo
+    // Carrega som de laser do inimigo (volume baixo)
     snprintf(path, sizeof(path), "%sassets/sounds/enemy_laser_sound.wav", base_path);
     game->sounds.enemy_laser_sound = Mix_LoadWAV(path);
     if (!game->sounds.enemy_laser_sound)
     {
         printf("Erro ao carregar som de laser do inimigo: %s\n", Mix_GetError());
+    }
+    else
+    {
+        Mix_VolumeChunk(game->sounds.enemy_laser_sound, 62);
     }
 
     SDL_free(base_path);
@@ -67,6 +78,10 @@ void load_music(GameState *game)
     if (!game->music.background_music)
     {
         printf("Erro ao carregar música: %s\n", Mix_GetError());
+    }
+    else
+    {
+        Mix_VolumeMusic(40);
     }
 
     SDL_free(base_path);
