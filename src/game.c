@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include "audio.h"
 #include <time.h>
 #include "game.h"
 #include "input.h"
@@ -8,10 +9,22 @@
 #include "projectile.h"
 #include "enemy.h"
 
+SoundEffects sounds;
+Music music;
+
 void initialize_game(GameState *game)
 {
-    SDL_Init(SDL_INIT_VIDEO);
-    TTF_Init();
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        printf("Erro ao inicializar SDL: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    if (TTF_Init() == -1)
+    {
+        printf("Erro ao inicializar TTF: %s\n", TTF_GetError());
+        exit(1);
+    }
 
     game->current_width = DEFAULT_WIDTH;
     game->current_height = DEFAULT_HEIGHT;
@@ -30,6 +43,14 @@ void initialize_game(GameState *game)
 
     SDL_SetWindowMinimumSize(game->window, DEFAULT_WIDTH, DEFAULT_HEIGHT); // Define o tamanho mínimo da janela
 
+    // Inicializa o renderer depois de garantir que a janela foi criada
+    game->renderer = SDL_CreateRenderer(game->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (!game->renderer)
+    {
+        printf("Erro ao criar o renderer: %s\n", SDL_GetError());
+        exit(1);
+    }
+
     SDL_RenderSetLogicalSize(game->renderer, game->current_width, game->current_height);
     SDL_RenderSetIntegerScale(game->renderer, SDL_TRUE); // Garante que a escala seja um número inteiro, evitando distorções
 
@@ -47,18 +68,14 @@ void initialize_game(GameState *game)
     SDL_Surface *icon = IMG_Load(full_icon_path);
     if (!icon)
     {
-        printf("Erro ao carregar ícone em:\n%s\nErro: %s\n",
-               full_icon_path, IMG_GetError());
+        printf("Erro ao carregar ícone em:\n%s\nErro: %s\n", full_icon_path, IMG_GetError());
         SDL_free(base_path);
         exit(1);
     }
     SDL_SetWindowIcon(game->window, icon);
     SDL_FreeSurface(icon);
 
-    game->renderer = SDL_CreateRenderer(game->window, -1,
-                                        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-    // Carrega fonte
+    // Carrega a fonte
     char full_font_path[1024];
     snprintf(full_font_path, sizeof(full_font_path), "%s%s", base_path, FONT_MAIN);
 
@@ -67,14 +84,25 @@ void initialize_game(GameState *game)
 
     if (!game->font)
     {
-        printf("Erro ao carregar fonte em:\n%s\nErro: %s\n",
-               full_font_path, TTF_GetError());
+        printf("Erro ao carregar fonte em:\n%s\nErro: %s\n", full_font_path, TTF_GetError());
         exit(1);
     }
 
     game->is_fullscreen = false;
     game->score = 0;
     game->running = true;
+
+    // Inicializa o áudio
+    if (!init_audio())
+    {
+        exit(1);
+    }
+
+    load_sounds(&sounds);
+    load_music(&music);
+
+    // Exemplo de tocar a música de fundo logo no início
+    play_background_music(&music);
 
     // Inicialização do jogador
     init_player(&game->player, game);
@@ -92,11 +120,12 @@ void initialize_game(GameState *game)
     srand(time(NULL));
     SDL_RenderSetLogicalSize(game->renderer, game->current_width, game->current_height);
 }
+
 void run_game_loop(GameState *game)
 {
     while (game->running)
     {
-        handle_input(game);
+        handle_input(game, &sounds);
         update_player(&game->player, game);
         update_projectiles(game);
         spawn_enemy(game);
@@ -109,6 +138,7 @@ void run_game_loop(GameState *game)
 
 void cleanup_game(GameState *game)
 {
+    cleanup_audio(&sounds, &music);
     SDL_DestroyRenderer(game->renderer);
     SDL_DestroyWindow(game->window);
     TTF_CloseFont(game->font);

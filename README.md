@@ -6,7 +6,7 @@ Starfall is an indie 2D space shooter developed using **SDL2**. Pilot your space
 
 ## 🛠️ Technologies
 - **Language**: C (C99 standard)
-- **Graphics**: SDL2 + SDL2_ttf + SDL2_image
+- **Graphics**: SDL2 + SDL2_ttf + SDL2_image + SDL_mixer
 - **Platforms**: Linux (tested), Windows (requires additional setup)
 
 ## 🚀 Features (Planned)
@@ -23,7 +23,7 @@ Starfall is an indie 2D space shooter developed using **SDL2**. Pilot your space
    ```
 2. Install SDL2 dependencies:
    ```sh
-   sudo apt install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev  # (Linux)
+   sudo apt install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev # (Linux)
    ```
 3. Compile the project:
    ```sh

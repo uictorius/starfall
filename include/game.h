@@ -5,6 +5,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 #include "config.h"
+#include <SDL2/SDL_mixer.h>
 
 typedef struct GameState GameState;
 #include "player.h"
@@ -12,6 +13,7 @@ typedef struct GameState GameState;
 #include "enemy.h"
 
 struct GameState {
+    Mix_Chunk* shoot_sound;
     int current_width;
     int current_height;
     int stored_window_width;

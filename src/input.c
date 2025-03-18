@@ -1,9 +1,10 @@
 #include "input.h"
 #include "projectile.h"
 #include "graphics.h"
+#include "audio.h"
 #include <math.h>
 
-void handle_input(GameState *game)
+void handle_input(GameState *game, SoundEffects *sounds)
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -35,6 +36,7 @@ void handle_input(GameState *game)
         {
             int mouseX, mouseY;
             SDL_GetMouseState(&mouseX, &mouseY);
+            play_laser_sound(sounds);
             fire_projectile(game, mouseX, mouseY);
         }
 

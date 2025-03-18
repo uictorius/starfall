@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -std=c99 -Wall -Wextra -Iinclude
-LDFLAGS = -lSDL2 -lSDL2_ttf -lSDL2_image -lm -lGL
+LDFLAGS = -lSDL2 -lSDL2_ttf -lSDL2_image -lm -lGL -lSDL2_mixer
 
-SRC = src/main.c src/game.c src/player.c src/projectile.c src/enemy.c src/input.c src/graphics.c
+SRC = src/main.c src/game.c src/player.c src/projectile.c src/enemy.c src/input.c src/graphics.c src/audio.c
 OBJ = $(patsubst src/%.c, build/%.o, $(SRC))
 EXEC = build/starfall  # Nome mais descritivo
 
