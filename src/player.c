@@ -12,12 +12,8 @@ void init_player(Player *player) {
 void update_player(Player *player) {
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
     
-    if(keystate[SDL_SCANCODE_W]) player->y -= PLAYER_SPEED;
-    if(keystate[SDL_SCANCODE_S]) player->y += PLAYER_SPEED;
-    if(keystate[SDL_SCANCODE_A]) player->x -= PLAYER_SPEED;
-    if(keystate[SDL_SCANCODE_D]) player->x += PLAYER_SPEED;
-
-    // Limites da tela
-    player->x = fmax(player->radius, fmin(SCREEN_WIDTH - player->radius, player->x));
-    player->y = fmax(player->radius, fmin(SCREEN_HEIGHT - player->radius, player->y));
+    if (keystate[SDL_SCANCODE_W]) player->y = fmax(player->y - PLAYER_SPEED, player->radius);
+    if (keystate[SDL_SCANCODE_S]) player->y = fmin(player->y + PLAYER_SPEED, SCREEN_HEIGHT - player->radius);
+    if (keystate[SDL_SCANCODE_A]) player->x = fmax(player->x - PLAYER_SPEED, player->radius);
+    if (keystate[SDL_SCANCODE_D]) player->x = fmin(player->x + PLAYER_SPEED, SCREEN_WIDTH - player->radius);
 }

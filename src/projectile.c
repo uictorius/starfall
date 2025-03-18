@@ -25,17 +25,9 @@ void update_projectiles(GameState *game) {
             game->projectiles[i].x += game->projectiles[i].dx;
             game->projectiles[i].y += game->projectiles[i].dy;
 
-            // Colisão com bordas
-            if(game->projectiles[i].x < 0 || game->projectiles[i].x > SCREEN_WIDTH) {
-                game->projectiles[i].dx *= -1;
-                game->projectiles[i].bounces++;
-            }
-            if(game->projectiles[i].y < 0 || game->projectiles[i].y > SCREEN_HEIGHT) {
-                game->projectiles[i].dy *= -1;
-                game->projectiles[i].bounces++;
-            }
-
-            if(game->projectiles[i].bounces > MAX_BOUNCES) {
+            // Verifica se o projétil saiu da tela
+            if (game->projectiles[i].x < 0 || game->projectiles[i].x > SCREEN_WIDTH || 
+                game->projectiles[i].y < 0 || game->projectiles[i].y > SCREEN_HEIGHT) {
                 game->projectiles[i].active = false;
             }
         }
