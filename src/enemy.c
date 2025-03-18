@@ -95,10 +95,17 @@ void update_enemies(GameState *game)
 
             if (distance < game->player.radius + game->enemies[i].radius)
             {
+                if (Mix_PlayChannel(-1, game->sounds.explosion_sound, 0) == -1)
+                {
+                    printf("Erro ao tocar som: %s\n", Mix_GetError());
+                }
                 game->player.lives--;
                 game->enemies[i].active = false;
                 if (game->player.lives <= 0)
-                    game->running = false;
+                {
+                    game->current_state = GAME_STATE_GAME_OVER; // Muda o estado para "Game Over"
+                    game->selected_menu_option = 0;             // Reseta a seleção do menu
+                }
             }
         }
     }
@@ -154,7 +161,8 @@ void check_collisions(GameState *game)
 
                 if (game->player.lives <= 0)
                 {
-                    game->running = false;
+                    game->current_state = GAME_STATE_GAME_OVER;
+                    game->selected_menu_option = 0;
                 }
             }
         }
@@ -211,7 +219,11 @@ void enemy_shoot(GameState *game, Enemy *enemy)
             game->projectiles[i].radius = 4;
             game->projectiles[i].active = true;
             game->projectiles[i].is_enemy = true;
-            game->projectiles[i].color = (SDL_Color){255, 50, 50, 255};
+            game->projectiles[i].color = (SDL_Color){
+                255,
+                rand() % 155 + 50, // Verde entre 50-205
+                rand() % 155 + 50, // Azul entre 50-205
+                255};
 
             // Som de disparo inimigo
             if (Mix_PlayChannel(-1, game->sounds.enemy_laser_sound, 0) == -1)

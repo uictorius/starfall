@@ -7,6 +7,11 @@
 #include "config.h"
 #include <SDL2/SDL_mixer.h>
 
+// Constantes para inicialização
+#define INITIAL_ENEMY_SPEED_MULTIPLIER 1.5f
+#define FPS_TARGET 60
+#define FRAME_DELAY (1000 / FPS_TARGET)
+
 typedef struct GameState GameState;
 #include "player.h"
 #include "projectile.h"
@@ -42,6 +47,10 @@ struct GameState {
     SDL_Texture* background_texture;
     int bg_width;
     int bg_height;
+    GameStateEnum current_state;
+    SDL_Texture* menu_texture;
+    SDL_Texture* game_over_texture;
+    int selected_menu_option;
 };
 
 // Declarações de funções
@@ -49,6 +58,8 @@ void initialize_game(GameState *game);
 void run_game_loop(GameState *game);
 void cleanup_game(GameState *game);
 void update_projectiles(GameState *game);
+void initialize_menu(GameState *game);
+void reset_game(GameState *game);
 
 // Define os paths relativos
 #define ASSETS_DIR "assets"

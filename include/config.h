@@ -12,4 +12,10 @@
 #define MAX_PROJECTILES 100
 #define MAX_ENEMIES 50
 
+typedef enum {
+    GAME_STATE_MENU,
+    GAME_STATE_PLAYING,
+    GAME_STATE_GAME_OVER
+} GameStateEnum;
+
 #endif
