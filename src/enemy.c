@@ -10,10 +10,10 @@ void spawn_enemy(GameState *game) {
             if(!game->enemies[i].active) {
                 int side = rand() % 4;
                 switch(side) {
-                    case 0: game->enemies[i].x = -20; game->enemies[i].y = rand() % SCREEN_HEIGHT; break;
-                    case 1: game->enemies[i].x = SCREEN_WIDTH + 20; game->enemies[i].y = rand() % SCREEN_HEIGHT; break;
-                    case 2: game->enemies[i].x = rand() % SCREEN_WIDTH; game->enemies[i].y = -20; break;
-                    case 3: game->enemies[i].x = rand() % SCREEN_WIDTH; game->enemies[i].y = SCREEN_HEIGHT + 20; break;
+                    case 0: game->enemies[i].x = -20; game->enemies[i].y = rand() % game->current_height; break;
+                    case 1: game->enemies[i].x = game->current_width + 20; game->enemies[i].y = rand() % game->current_height; break;
+                    case 2: game->enemies[i].x = rand() % game->current_width; game->enemies[i].y = -20; break;
+                    case 3: game->enemies[i].x = rand() % game->current_width; game->enemies[i].y = game->current_height + 20; break;
                 }
 
                 float angle = atan2(game->player.y - game->enemies[i].y, 

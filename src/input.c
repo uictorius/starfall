@@ -13,24 +13,19 @@ void handle_input(GameState *game)
             switch (event.window.event)
             {
             case SDL_WINDOWEVENT_RESIZED:
-                int w, h;
-                SDL_GetWindowSize(game->window, &w, &h);
-                float target_aspect = 16.0f / 9.0f;
-                int expected_width = h * target_aspect;
-                int expected_height = w / target_aspect;
-
-                if (w != expected_width)
+            {
+                SDL_GetWindowSize(game->window, &game->current_width, &game->current_height);
+                if (!game->is_fullscreen)
                 {
-                    SDL_SetWindowSize(game->window, expected_width, h);
+                    game->stored_window_width = game->current_width;
+                    game->stored_window_height = game->current_height;
                 }
-                else if (h != expected_height)
-                {
-                    SDL_SetWindowSize(game->window, w, expected_height);
-                }
+                SDL_RenderSetLogicalSize(game->renderer, game->current_width, game->current_height);
                 break;
             }
+            }
         }
-        
+
         if (event.type == SDL_QUIT)
         {
             game->running = false;

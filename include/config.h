@@ -3,8 +3,8 @@
 
 #include <stdbool.h>
 
-#define SCREEN_WIDTH 1366
-#define SCREEN_HEIGHT 768
+#define DEFAULT_WIDTH 640
+#define DEFAULT_HEIGHT 360
 #define PLAYER_SPEED 5
 #define PROJECTILE_SPEED 16
 #define MAX_BOUNCES 3

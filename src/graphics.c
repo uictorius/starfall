@@ -6,17 +6,17 @@
 
 void render_game(GameState *game)
 {
+
+    float target_aspect = (float)game->current_width / (float)game->current_height;
     // Limpa com cor de fundo
     SDL_SetRenderDrawColor(game->renderer, 30, 30, 40, 255);
     SDL_RenderClear(game->renderer);
-    SDL_RenderSetLogicalSize(game->renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+    SDL_RenderSetLogicalSize(game->renderer, game->current_width, game->current_height);
+    SDL_RenderSetIntegerScale(game->renderer, SDL_TRUE); // Garante que a escala seja um número inteiro, evitando distorções
 
     // Calcula viewport com aspect ratio correto
     int win_w, win_h;
     SDL_GetWindowSize(game->window, &win_w, &win_h);
-    
-
-    float target_aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
     float window_aspect = (float)win_w / (float)win_h;
 
     SDL_Rect viewport;
@@ -41,7 +41,7 @@ void render_game(GameState *game)
 
     // Desenhar borda
     SDL_SetRenderDrawColor(game->renderer, 255, 255, 255, 255);
-    SDL_Rect border = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    SDL_Rect border = {0, 0, game->current_width, game->current_height};
     SDL_RenderDrawRect(game->renderer, &border);
 
     // Desenhar jogador
@@ -96,7 +96,7 @@ void render_hud(GameState *game)
     snprintf(text, sizeof(text), "Vidas: %d", game->player.lives);
     SDL_Surface *surface = TTF_RenderText_Solid(game->font, text, (SDL_Color){255, 255, 255, 255});
     SDL_Texture *texture = SDL_CreateTextureFromSurface(game->renderer, surface);
-    SDL_Rect dest = {SCREEN_WIDTH - surface->w - 10, 10, surface->w, surface->h};
+    SDL_Rect dest = {game->current_width - surface->w - 10, 10, surface->w, surface->h};
     SDL_RenderCopy(game->renderer, texture, NULL, &dest);
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
@@ -114,6 +114,23 @@ void render_hud(GameState *game)
 void toggle_fullscreen(GameState *game)
 {
     game->is_fullscreen = !game->is_fullscreen;
-    SDL_SetWindowFullscreen(game->window,
-                            game->is_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    
+    if (game->is_fullscreen)
+    {
+        // Guarda o tamanho atual ANTES de entrar em fullscreen
+        SDL_GetWindowSize(game->window, &game->stored_window_width, &game->stored_window_height);
+        SDL_SetWindowFullscreen(game->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    }
+    else
+    {
+        // Restaura o tamanho guardado e sai do fullscreen
+        SDL_SetWindowFullscreen(game->window, 0);
+        SDL_SetWindowSize(game->window, game->stored_window_width, game->stored_window_height);
+    }
+    
+    // Atualiza as dimensões atuais
+    SDL_GetWindowSize(game->window, &game->current_width, &game->current_height);
+    
+    // Mantém a resolução lógica baseada no aspect ratio original
+    SDL_RenderSetLogicalSize(game->renderer, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 }

@@ -13,14 +13,25 @@ void initialize_game(GameState *game)
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
 
-    // Cria janela não redimensionável
+    game->current_width = DEFAULT_WIDTH;
+    game->current_height = DEFAULT_HEIGHT;
+
     game->window = SDL_CreateWindow("Starfall 2D",
                                     SDL_WINDOWPOS_CENTERED,
                                     SDL_WINDOWPOS_CENTERED,
-                                    SCREEN_WIDTH,
-                                    SCREEN_HEIGHT,
-                                    0); // Flag 0 = janela fixa
-    SDL_RenderSetLogicalSize(game->renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+                                    game->current_width,
+                                    game->current_height,
+                                    SDL_WINDOW_RESIZABLE);
+    if (!game->window)
+    {
+        printf("Erro ao criar janela: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    SDL_SetWindowMinimumSize(game->window, DEFAULT_WIDTH, DEFAULT_HEIGHT); // Define o tamanho mínimo da janela
+
+    SDL_RenderSetLogicalSize(game->renderer, game->current_width, game->current_height);
+    SDL_RenderSetIntegerScale(game->renderer, SDL_TRUE); // Garante que a escala seja um número inteiro, evitando distorções
 
     char *base_path = SDL_GetBasePath();
     if (!base_path)
@@ -66,7 +77,7 @@ void initialize_game(GameState *game)
     game->running = true;
 
     // Inicialização do jogador
-    init_player(&game->player); // ✅ Correto
+    init_player(&game->player, game);
 
     // Inicializa arrays
     for (int i = 0; i < MAX_PROJECTILES; i++)
@@ -79,14 +90,14 @@ void initialize_game(GameState *game)
     }
 
     srand(time(NULL));
-    SDL_RenderSetLogicalSize(game->renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+    SDL_RenderSetLogicalSize(game->renderer, game->current_width, game->current_height);
 }
 void run_game_loop(GameState *game)
 {
     while (game->running)
     {
         handle_input(game);
-        update_player(&game->player);
+        update_player(&game->player, game);
         update_projectiles(game);
         spawn_enemy(game);
         update_enemies(game);

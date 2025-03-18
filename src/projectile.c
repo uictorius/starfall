@@ -26,8 +26,8 @@ void update_projectiles(GameState *game) {
             game->projectiles[i].y += game->projectiles[i].dy;
 
             // Verifica se o projétil saiu da tela
-            if (game->projectiles[i].x < 0 || game->projectiles[i].x > SCREEN_WIDTH || 
-                game->projectiles[i].y < 0 || game->projectiles[i].y > SCREEN_HEIGHT) {
+            if (game->projectiles[i].x < 0 || game->projectiles[i].x > game->current_width || 
+                game->projectiles[i].y < 0 || game->projectiles[i].y > game->current_height) {
                 game->projectiles[i].active = false;
             }
         }

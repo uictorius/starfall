@@ -12,6 +12,10 @@ typedef struct GameState GameState;
 #include "enemy.h"
 
 struct GameState {
+    int current_width;
+    int current_height;
+    int stored_window_width;
+    int stored_window_height;
     SDL_Window *window;
     SDL_Renderer *renderer;
     TTF_Font *font;
