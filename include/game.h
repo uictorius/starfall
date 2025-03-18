@@ -12,8 +12,16 @@ typedef struct GameState GameState;
 #include "projectile.h"
 #include "enemy.h"
 
+typedef struct {
+    Mix_Chunk* laser_sound;
+    Mix_Chunk* explosion_sound;
+} SoundEffects;
+
+typedef struct {
+    Mix_Music* background_music;
+} Music;
+
 struct GameState {
-    Mix_Chunk* shoot_sound;
     int current_width;
     int current_height;
     int stored_window_width;
@@ -27,6 +35,8 @@ struct GameState {
     int score;
     bool running;
     bool is_fullscreen;
+    SoundEffects sounds;
+    Music music;
 };
 
 // Declarações de funções

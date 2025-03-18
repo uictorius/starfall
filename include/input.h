@@ -4,7 +4,7 @@
 #include "game.h"
 #include "audio.h" 
 
-void handle_input(GameState *game, SoundEffects *sounds);
+void handle_input(GameState *game);
 void toggle_fullscreen(GameState *game);
 
 #endif

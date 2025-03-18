@@ -4,7 +4,7 @@
 #include "audio.h"
 #include <math.h>
 
-void handle_input(GameState *game, SoundEffects *sounds)
+void handle_input(GameState *game)
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -36,7 +36,12 @@ void handle_input(GameState *game, SoundEffects *sounds)
         {
             int mouseX, mouseY;
             SDL_GetMouseState(&mouseX, &mouseY);
-            play_laser_sound(sounds);
+
+            if (Mix_PlayChannel(-1, game->sounds.laser_sound, 0) == -1)
+            {
+                printf("Erro ao tocar som: %s\n", Mix_GetError());
+            }
+
             fire_projectile(game, mouseX, mouseY);
         }
 

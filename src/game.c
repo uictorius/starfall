@@ -14,7 +14,8 @@ Music music;
 
 void initialize_game(GameState *game)
 {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    // Inicializa SDL com suporte a áudio
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
         printf("Erro ao inicializar SDL: %s\n", SDL_GetError());
         exit(1);
@@ -92,17 +93,21 @@ void initialize_game(GameState *game)
     game->score = 0;
     game->running = true;
 
-    // Inicializa o áudio
     if (!init_audio())
     {
+        printf("Erro ao inicializar sistema de áudio\n");
         exit(1);
     }
 
-    load_sounds(&sounds);
-    load_music(&music);
+    // Carrega recursos de áudio
+    load_sounds(game);
+    load_music(game);
 
-    // Exemplo de tocar a música de fundo logo no início
-    play_background_music(&music);
+    // Toca música de fundo
+    if (Mix_PlayMusic(game->music.background_music, -1) == -1)
+    {
+        printf("Erro ao tocar música: %s\n", Mix_GetError());
+    }
 
     // Inicialização do jogador
     init_player(&game->player, game);
@@ -125,7 +130,7 @@ void run_game_loop(GameState *game)
 {
     while (game->running)
     {
-        handle_input(game, &sounds);
+        handle_input(game);
         update_player(&game->player, game);
         update_projectiles(game);
         spawn_enemy(game);
@@ -138,7 +143,7 @@ void run_game_loop(GameState *game)
 
 void cleanup_game(GameState *game)
 {
-    cleanup_audio(&sounds, &music);
+    cleanup_audio(game);
     SDL_DestroyRenderer(game->renderer);
     SDL_DestroyWindow(game->window);
     TTF_CloseFont(game->font);
