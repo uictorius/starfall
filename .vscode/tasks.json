@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Project (make all)",
+      "type": "shell",
+      "command": "make",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"],
+      "detail": "Compiles the entire project. This is the default build task."
+    },
+    {
+      "label": "Run Game (make run) 🚀",
+      "type": "shell",
+      "command": "make run",
+      "group": "test",
+      "problemMatcher": [],
+      "detail": "Builds the project if needed and runs the game."
+    },
+    {
+      "label": "Clean Project (make clean)",
+      "type": "shell",
+      "command": "make clean",
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "Removes all build files and documentation."
+    }
+  ]
+}

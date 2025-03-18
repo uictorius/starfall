@@ -1,6 +1,6 @@
 # Project
-.vscode
 build
+docs
 
 # Prerequisites
 *.d
@@ -54,3 +54,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Doxygen
+doxygen_warnings.log

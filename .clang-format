@@ -1,0 +1,9 @@
+Language: C
+BasedOnStyle: Google
+
+# Common settings for improved readability
+IndentWidth: 2
+ColumnLimit: 80
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false

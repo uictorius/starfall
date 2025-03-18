@@ -1,32 +1,53 @@
+# Compiler and flags
 CC = gcc
-CFLAGS = -std=c99 -Wall -Wextra -Iinclude
-LDFLAGS = -lSDL2 -lSDL2_ttf -lSDL2_image -lm -lGL -lSDL2_mixer
+CFLAGS = -std=c11 -Wall -Wextra -Iinclude -O2
+LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lm
 
-SRC = src/main.c src/game.c src/player.c src/projectile.c src/enemy.c src/input.c src/graphics.c src/audio.c
-OBJ = $(patsubst src/%.c, build/%.o, $(SRC))
-EXEC = build/starfall  # Nome mais descritivo
-
-ASSETS_DIR = assets
+# Directories
+SRC_DIRS = src/core src/game
 BUILD_DIR = build
+DOCS_DIR = docs
+EXEC_NAME = starfall
 
-.PHONY: all create_dir copy_assets clean
+# Find all .c files and generate object file names
+SRC = $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.c)) src/main.c
+OBJ = $(patsubst src/%.c, $(BUILD_DIR)/%.o, $(SRC))
 
-all: create_dir copy_assets $(EXEC)
+# Final executable
+EXEC = $(BUILD_DIR)/$(EXEC_NAME)
 
-create_dir:
-	@mkdir -p $(BUILD_DIR)
+# Targets
+.PHONY: all clean run docs
 
-copy_assets:
-	@mkdir -p $(BUILD_DIR)/assets
-	@cp -r $(ASSETS_DIR)/* $(BUILD_DIR)/assets/
-	@echo "Assets copiados para $(BUILD_DIR)/assets/"
+all: $(EXEC)
 
 $(EXEC): $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	@mkdir -p $(@D)
+	$(CC) $(OBJ) -o $@ $(LDFLAGS)
+	@echo "Build complete: $(EXEC)"
+	@# Copy assets after a successful build
+	@echo "Copying assets..."
+	@cp -r assets $(BUILD_DIR)/
 
-build/%.o: src/%.c
+$(BUILD_DIR)/%.o: src/%.c
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+run: all
+	./$(EXEC)
+
+# Format source code using clang-format
+format:
+	@echo "Formatting source and header files..."
+	@clang-format -i $(SRC) $(HEADERS)
+
+# Target to generate Doxygen documentation
+docs: Doxyfile
+	@echo "Generating Doxygen documentation..."
+	@doxygen Doxyfile
+	@echo "Documentation generated in $(DOCS_DIR)/html"
+
+# Target to clean build files and documentation
 clean:
-	@rm -rf $(BUILD_DIR)/*.o $(EXEC) $(BUILD_DIR)/assets
-	@echo "Build limpo!"
+	@echo "Cleaning build and documentation files..."
+	@rm -rf $(BUILD_DIR) $(DOCS_DIR)

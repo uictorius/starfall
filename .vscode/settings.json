@@ -1,0 +1,32 @@
+{
+  // --- IntelliSense & Compiler Configuration ---
+  // Use Makefile Tools to provide IntelliSense configuration.
+  "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
+  // Set C language standard for IntelliSense to C11, matching the Makefile.
+  "C_Cpp.default.cStandard": "c11",
+
+  // --- Code Formatting & Hygiene ---
+  // Format code on save.
+  "editor.formatOnSave": true,
+  // Trim trailing whitespace on save.
+  "files.trimTrailingWhitespace": true,
+  // Insert a final newline at the end of files on save.
+  "files.insertFinalNewline": true,
+  // Fallback style if .clang-format is not found.
+  "C_Cpp.clang_format_fallbackStyle": "Google",
+
+  // --- File Associations ---
+  // Associate all .h files with the C language mode.
+  "files.associations": {
+    "*.h": "c"
+  },
+
+  // --- Editor Experience ---
+  // Exclude build and documentation directories from file search.
+  "search.exclude": {
+    "build/": true,
+    "docs/": true
+  },
+  // Display vertical rulers at 80 and 100 columns.
+  "editor.rulers": [80, 100]
+}

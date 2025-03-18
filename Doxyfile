@@ -1,0 +1,86 @@
+# Doxyfile 1.9.1
+# Standard configuration for the Starfall 2D project.
+
+#---------------------------------------------------------------------------
+# Project Information
+#---------------------------------------------------------------------------
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = "Starfall 2D"
+PROJECT_NUMBER         = 1.0.0
+PROJECT_BRIEF          = "A simple 2D space shooter game made with SDL2."
+PROJECT_LOGO           = assets/images/icon.png
+OUTPUT_DIRECTORY       = docs
+CREATE_SUBDIRS         = YES
+OUTPUT_LANGUAGE        = English
+BRIEF_MEMBER_DESC      = YES
+REPEAT_BRIEF           = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+TYPEDEF_HIDES_STRUCT   = NO
+USE_MDFILE_AS_MAINPAGE = README.md
+
+#---------------------------------------------------------------------------
+# Input Sources Configuration
+#---------------------------------------------------------------------------
+INPUT                  = include src README.md
+IMAGE_PATH             = screenshots
+RECURSIVE              = YES
+FILE_PATTERNS          = *.c *.h
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+INTERNAL_DOCS          = NO
+CASE_SENSE_NAMES       = YES
+SHOW_INCLUDE_FILES     = YES
+INLINE_INFO            = YES
+SORT_MEMBER_DOCS       = YES
+GENERATE_TODOLIST      = YES
+GENERATE_TESTLIST      = YES
+GENERATE_BUGLIST       = YES
+GENERATE_DEPRECATEDLIST= YES
+
+#---------------------------------------------------------------------------
+# HTML Output Configuration
+#---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+# HTML_TIMESTAMP         = YES (Obsolete)
+HTML_DYNAMIC_SECTIONS  = YES
+GENERATE_TREEVIEW      = YES # Essential for the side navigation panel.
+TREEVIEW_WIDTH         = 250
+SEARCHENGINE           = YES
+DISABLE_INDEX          = NO
+
+#---------------------------------------------------------------------------
+# LaTeX Output Configuration (Disabled)
+#---------------------------------------------------------------------------
+GENERATE_LATEX         = NO
+
+#---------------------------------------------------------------------------
+# Diagram Generation (requires 'dot' from Graphviz)
+#---------------------------------------------------------------------------
+# Set to YES if Graphviz is installed to generate diagrams.
+HAVE_DOT               = YES
+# Generates dependency graphs for included files.
+INCLUDE_GRAPH          = YES
+INCLUDED_BY_GRAPH      = YES
+# Generates call graphs showing function relationships.
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+# Generates graphical class hierarchies.
+GRAPHICAL_HIERARCHY    = YES
+# Generates a graph of the directory structure.
+DIRECTORY_GRAPH        = YES
+# Use transparent backgrounds for generated diagrams.
+#DOT_TRANSPARENT        = YES (Obsolete)
+GENERATE_LEGEND        = YES
+
+#---------------------------------------------------------------------------
+# Warning and Logging
+#---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_LOGFILE           = doxygen_warnings.log
