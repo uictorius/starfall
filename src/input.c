@@ -23,35 +23,45 @@ void handle_game_over_selection(GameState *game)
 
 void handle_game_over_mouse(GameState *game, int mouseX, int mouseY)
 {
-    // Conversão para coordenadas lógicas (float)
     float logicalX, logicalY;
-    SDL_RenderWindowToLogical(
-        game->renderer,
-        mouseX,
-        mouseY,
-        &logicalX,
-        &logicalY);
+    SDL_RenderWindowToLogical(game->renderer, mouseX, mouseY, &logicalX, &logicalY);
 
-    // Ajuste nas verificações usando coordenadas float
-    const float option_y_start = 400.0f;
-    const float option_height = 70.0f;
+    // Obter dimensões reais dos textos
+    const char *options[] = {"Reiniciar", "Menu Principal", "Sair"};
+    int option_heights[3];
+    int total_height = 0;
 
-    if (logicalY >= option_y_start && logicalY < option_y_start + option_height)
+    // Pré-calcular alturas
+    for (int i = 0; i < 3; i++)
     {
-        game->selected_menu_option = 0;
-        handle_game_over_selection(game);
+        SDL_Surface *surface = TTF_RenderText_Blended(game->font, options[i], (SDL_Color){255, 255, 255, 255});
+        option_heights[i] = surface->h;
+        SDL_FreeSurface(surface);
+        total_height += option_heights[i] + 20; // 20px de espaçamento
     }
-    else if (logicalY >= option_y_start + option_height &&
-             logicalY < option_y_start + 2 * option_height)
+
+    // Calcular posição inicial baseada no centro
+    int start_y = game->current_height * 0.4f;
+    int current_y = start_y;
+
+    // Verificar colisão para cada opção
+    for (int i = 0; i < 3; i++)
     {
-        game->selected_menu_option = 1;
-        handle_game_over_selection(game);
-    }
-    else if (logicalY >= option_y_start + 2 * option_height &&
-             logicalY < option_y_start + 3 * option_height)
-    {
-        game->selected_menu_option = 2;
-        handle_game_over_selection(game);
+        SDL_Surface *surface = TTF_RenderText_Blended(game->font, options[i], (SDL_Color){255, 255, 255, 255});
+        int text_width = surface->w;
+        SDL_FreeSurface(surface);
+
+        if (logicalX >= (game->current_width - text_width) / 2 &&
+            logicalX <= (game->current_width + text_width) / 2 &&
+            logicalY >= current_y &&
+            logicalY <= current_y + option_heights[i])
+        {
+
+            game->selected_menu_option = i;
+            handle_game_over_selection(game);
+            break;
+        }
+        current_y += option_heights[i] + 20;
     }
 }
 
@@ -66,7 +76,6 @@ void handle_input(GameState *game)
             switch (event.window.event)
             {
             case SDL_WINDOWEVENT_RESIZED:
-            {
                 SDL_GetWindowSize(game->window, &game->current_width, &game->current_height);
                 if (!game->is_fullscreen)
                 {
@@ -75,7 +84,6 @@ void handle_input(GameState *game)
                 }
                 SDL_RenderSetLogicalSize(game->renderer, game->current_width, game->current_height);
                 break;
-            }
             }
         }
 
@@ -130,47 +138,52 @@ void handle_menu_input(GameState *game, SDL_Event *event)
 {
     switch (event->type)
     {
-    case SDL_KEYDOWN:
-        if (event->key.keysym.sym == SDLK_DOWN)
-        {
-            game->selected_menu_option = (game->selected_menu_option + 1) % 2;
-        }
-        else if (event->key.keysym.sym == SDLK_UP)
-        {
-            game->selected_menu_option = (game->selected_menu_option - 1 + 2) % 2;
-        }
-        else if (event->key.keysym.sym == SDLK_RETURN)
-        {
-            if (game->selected_menu_option == 0)
-            { // Jogar
-                game->current_state = GAME_STATE_PLAYING;
-                reset_game(game); // Função para reiniciar o estado do jogo
-            }
-            else
-            { // Sair
-                game->running = false;
-            }
-        }
-        break;
-
     case SDL_MOUSEBUTTONDOWN:
-        int mouseX, mouseY;
-        SDL_GetMouseState(&mouseX, &mouseY);
+    {
+        int mouseX = event->button.x;
+        int mouseY = event->button.y;
+        float logicalX, logicalY;
+        SDL_RenderWindowToLogical(game->renderer, mouseX, mouseY, &logicalX, &logicalY);
 
-        // Verifica clique nas opções
-        if (mouseY > 300 && mouseY < 400)
+        const char *options[] = {"Jogar", "Sair"};
+        const int option_spacing = 50; // Deve corresponder ao valor usado na renderização
+        int y_pos = game->current_height * 0.4f;
+
+        for (int i = 0; i < 2; i++)
         {
-            if (mouseX > (game->current_width - 100) / 2 && mouseX < (game->current_width + 100) / 2)
+            SDL_Surface *surface = TTF_RenderText_Blended(game->font, options[i], (SDL_Color){255, 255, 255, 255});
+            int text_width = surface->w;
+            int text_height = surface->h;
+            SDL_FreeSurface(surface);
+
+            // Área clicável ajustada com margem vertical
+            SDL_FRect click_area = {
+                (game->current_width - text_width) / 2.0f,
+                y_pos - 5, // Margem superior
+                text_width,
+                text_height + 10 // Margem inferior
+            };
+
+            if (logicalX >= click_area.x &&
+                logicalX <= click_area.x + click_area.w &&
+                logicalY >= click_area.y &&
+                logicalY <= click_area.y + click_area.h)
             {
-                game->current_state = GAME_STATE_PLAYING;
-                reset_game(game);
+                if (i == 0)
+                {
+                    game->current_state = GAME_STATE_PLAYING;
+                    reset_game(game);
+                }
+                else
+                {
+                    game->running = false;
+                }
+                break;
             }
-        }
-        else if (mouseY > 400 && mouseY < 500)
-        {
-            game->running = false;
+            y_pos += text_height + option_spacing;
         }
         break;
+    }
     }
 }
 

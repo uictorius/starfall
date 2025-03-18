@@ -126,49 +126,6 @@ void load_background(GameState *game)
     }
 }
 
-// graphics.c
-void render_menu(GameState *game)
-{
-    // Fundo
-    SDL_RenderCopy(game->renderer, game->menu_texture, NULL, NULL);
-
-    // Opções do menu
-    SDL_Color color = {255, 255, 255, 255};
-    SDL_Color selected_color = {0, 255, 0, 255};
-
-    // Título
-    SDL_Surface *title_surface = TTF_RenderText_Blended(game->font, "Starfall 2D", color);
-    SDL_Texture *title_texture = SDL_CreateTextureFromSurface(game->renderer, title_surface);
-    SDL_Rect title_rect = {(game->current_width - title_surface->w) / 2, 100, title_surface->w, title_surface->h};
-    SDL_RenderCopy(game->renderer, title_texture, NULL, &title_rect);
-
-    // Opções
-    const char *options[] = {"Jogar", "Sair"};
-    int y_pos = 300;
-
-    for (int i = 0; i < 2; i++)
-    {
-        SDL_Color text_color = (i == game->selected_menu_option) ? selected_color : color;
-
-        SDL_Surface *surface = TTF_RenderText_Blended(game->font, options[i], text_color);
-        SDL_Texture *texture = SDL_CreateTextureFromSurface(game->renderer, surface);
-        SDL_Rect rect = {
-            (game->current_width - surface->w) / 2,
-            y_pos,
-            surface->w,
-            surface->h};
-
-        SDL_RenderCopy(game->renderer, texture, NULL, &rect);
-        y_pos += 100;
-
-        SDL_FreeSurface(surface);
-        SDL_DestroyTexture(texture);
-    }
-
-    SDL_FreeSurface(title_surface);
-    SDL_DestroyTexture(title_texture);
-}
-
 void render_game_over(GameState *game)
 {
     // Fundo escuro semi-transparente
@@ -177,62 +134,118 @@ void render_game_over(GameState *game)
     SDL_Rect overlay = {0, 0, game->current_width, game->current_height};
     SDL_RenderFillRect(game->renderer, &overlay);
 
-    // Texto
-    SDL_Color color = {255, 255, 255, 255};
+    // Configurações adaptáveis
+    const int padding = 20;
 
-    char text[50];
-    snprintf(text, sizeof(text), "Pontos: %d", game->score);
-
-    SDL_Surface *surface = TTF_RenderText_Blended(game->font, "Game Over", color);
+    // Título
+    SDL_Surface *surface = TTF_RenderText_Blended(game->font, "Game Over",
+                                                  (SDL_Color){255, 255, 255, 255});
     SDL_Texture *texture = SDL_CreateTextureFromSurface(game->renderer, surface);
-    SDL_Rect rect = {
+
+    SDL_Rect title_rect = {
         (game->current_width - surface->w) / 2,
-        200,
+        game->current_height * 0.15f,
         surface->w,
         surface->h};
-    SDL_RenderCopy(game->renderer, texture, NULL, &rect);
+    SDL_RenderCopy(game->renderer, texture, NULL, &title_rect);
 
-    SDL_Surface *score_surface = TTF_RenderText_Blended(game->font, text, color);
+    // Pontuação
+    char score_text[50];
+    snprintf(score_text, sizeof(score_text), "Pontuação: %d", game->score);
+    SDL_Surface *score_surface = TTF_RenderText_Blended(game->font, score_text,
+                                                        (SDL_Color){255, 255, 255, 255});
     SDL_Texture *score_texture = SDL_CreateTextureFromSurface(game->renderer, score_surface);
+
     SDL_Rect score_rect = {
         (game->current_width - score_surface->w) / 2,
-        300,
+        title_rect.y + title_rect.h + padding,
         score_surface->w,
         score_surface->h};
     SDL_RenderCopy(game->renderer, score_texture, NULL, &score_rect);
 
-    // Opções
+    // Opções do menu
     const char *options[] = {"Reiniciar", "Menu Principal", "Sair"};
-    const int option_spacing = 70;
-    int y_pos = 400; // Ajuste conforme necessário
+    int y_pos = game->current_height * 0.4f;
+    const int option_spacing = 20;
 
     for (int i = 0; i < 3; i++)
     {
-        SDL_Color text_color = (i == game->selected_menu_option) ? (SDL_Color){255, 255, 255, 255} : (SDL_Color){150, 150, 150, 255};
+        SDL_Color color = (i == game->selected_menu_option) ? (SDL_Color){255, 255, 255, 255} : (SDL_Color){150, 150, 150, 255};
 
-        SDL_Surface *option_surface = TTF_RenderText_Blended(game->font, options[i], text_color);
+        SDL_Surface *option_surface = TTF_RenderText_Blended(game->font, options[i], color);
         SDL_Texture *option_texture = SDL_CreateTextureFromSurface(game->renderer, option_surface);
 
+        // Centralização precisa
         SDL_Rect option_rect = {
-            (game->current_width - option_surface->w) / 2, // Centralizado X
+            (game->current_width - option_surface->w) / 2,
             y_pos,
             option_surface->w,
             option_surface->h};
 
         SDL_RenderCopy(game->renderer, option_texture, NULL, &option_rect);
-        y_pos += option_spacing;
+        y_pos += option_surface->h + option_spacing;
 
         SDL_FreeSurface(option_surface);
         SDL_DestroyTexture(option_texture);
     }
 
+    // Limpeza
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(score_surface);
     SDL_DestroyTexture(score_texture);
 }
 
-// Adicione esta função em graphics.c
+void render_menu(GameState *game)
+{
+    // Fundo
+    SDL_RenderCopy(game->renderer, game->menu_texture, NULL, NULL);
+
+    // Configurações adaptáveis
+    int base_font_size = TTF_FontHeight(game->font);
+
+    // Título
+    SDL_Surface *title_surface = TTF_RenderText_Blended(game->font, "Starfall 2D",
+                                                        (SDL_Color){255, 255, 255, 255});
+    SDL_Texture *title_texture = SDL_CreateTextureFromSurface(game->renderer, title_surface);
+
+    SDL_Rect title_rect = {
+        (game->current_width - title_surface->w) / 2,
+        game->current_height * 0.2f,
+        title_surface->w,
+        title_surface->h};
+    SDL_RenderCopy(game->renderer, title_texture, NULL, &title_rect);
+
+    // Opções
+    const char *options[] = {"Jogar", "Sair"};
+    int y_pos = game->current_height * 0.4f;
+    const int option_spacing = base_font_size * 2;
+
+    for (int i = 0; i < 2; i++)
+    {
+        SDL_Color text_color = (i == game->selected_menu_option) ? (SDL_Color){0, 255, 0, 255} : (SDL_Color){255, 255, 255, 255};
+
+        SDL_Surface *surface = TTF_RenderText_Blended(game->font, options[i], text_color);
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(game->renderer, surface);
+
+        SDL_Rect rect = {
+            (game->current_width - surface->w) / 2,
+            y_pos,
+            surface->w,
+            surface->h};
+
+        SDL_RenderCopy(game->renderer, texture, NULL, &rect);
+        y_pos += surface->h + option_spacing;
+
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+    }
+
+    // Limpeza
+    SDL_FreeSurface(title_surface);
+    SDL_DestroyTexture(title_texture);
+}
+
 void render_game_objects(GameState *game)
 {
     // Renderiza o background repetido (mesmo código que está no render_game)

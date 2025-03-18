@@ -6,7 +6,7 @@ void init_player(Player *player, GameState *game) {
     player->x = game->current_width / 2;
     player->y = game->current_height / 2;
     player->radius = 12;
-    player->lives = 3;
+    player->lives = 50;
 }
 
 void update_player(Player *player, GameState *game) {
