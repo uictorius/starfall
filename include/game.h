@@ -39,6 +39,9 @@ struct GameState {
     SoundEffects sounds;
     Music music;
     float enemy_speed_multiplier;
+    SDL_Texture* background_texture;
+    int bg_width;
+    int bg_height;
 };
 
 // Declarações de funções

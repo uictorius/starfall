@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <SDL2/SDL_image.h> 
 
 #include "../include/graphics.h"
 #include "../include/config.h"
@@ -8,6 +9,7 @@ void render_game(GameState *game)
 {
 
     float target_aspect = (float)game->current_width / (float)game->current_height;
+
     // Limpa com cor de fundo
     SDL_SetRenderDrawColor(game->renderer, 30, 30, 40, 255);
     SDL_RenderClear(game->renderer);
@@ -44,6 +46,27 @@ void render_game(GameState *game)
     SDL_Rect border = {0, 0, game->current_width, game->current_height};
     SDL_RenderDrawRect(game->renderer, &border);
 
+    // Renderiza o background repetido
+    if (game->background_texture)
+    {
+        SDL_Rect dest = {0, 0, game->bg_width, game->bg_height};
+
+        // Calcula quantas repetições são necessárias
+        int x_repeat = (game->current_width / game->bg_width) + 1;
+        int y_repeat = (game->current_height / game->bg_height) + 1;
+
+        // Renderiza em tile
+        for (int y = 0; y < y_repeat; y++)
+        {
+            for (int x = 0; x < x_repeat; x++)
+            {
+                dest.x = x * game->bg_width;
+                dest.y = y * game->bg_height;
+                SDL_RenderCopy(game->renderer, game->background_texture, NULL, &dest);
+            }
+        }
+    }
+
     // Desenhar jogador
     SDL_SetRenderDrawColor(game->renderer, 0, 255, 0, 255);
     SDL_Rect player_rect = {
@@ -69,25 +92,28 @@ void render_game(GameState *game)
     }
 
     // Projéteis inimigos
-    for(int i = 0; i < MAX_PROJECTILES; i++) {
-        if(game->projectiles[i].active) {
-            if(game->projectiles[i].is_enemy) {
-                SDL_SetRenderDrawColor(game->renderer, 
-                    game->projectiles[i].color.r,
-                    game->projectiles[i].color.g,
-                    game->projectiles[i].color.b,
-                    game->projectiles[i].color.a);
+    for (int i = 0; i < MAX_PROJECTILES; i++)
+    {
+        if (game->projectiles[i].active)
+        {
+            if (game->projectiles[i].is_enemy)
+            {
+                SDL_SetRenderDrawColor(game->renderer,
+                                       game->projectiles[i].color.r,
+                                       game->projectiles[i].color.g,
+                                       game->projectiles[i].color.b,
+                                       game->projectiles[i].color.a);
             }
-            else {
+            else
+            {
                 SDL_SetRenderDrawColor(game->renderer, 255, 255, 0, 255);
             }
-            
+
             SDL_Rect proj_rect = {
                 game->projectiles[i].x - game->projectiles[i].radius,
                 game->projectiles[i].y - game->projectiles[i].radius,
                 game->projectiles[i].radius * 2,
-                game->projectiles[i].radius * 2
-            };
+                game->projectiles[i].radius * 2};
             SDL_RenderFillRect(game->renderer, &proj_rect);
         }
     }
@@ -138,7 +164,7 @@ void render_hud(GameState *game)
 void toggle_fullscreen(GameState *game)
 {
     game->is_fullscreen = !game->is_fullscreen;
-    
+
     if (game->is_fullscreen)
     {
         // Guarda o tamanho atual ANTES de entrar em fullscreen
@@ -151,10 +177,29 @@ void toggle_fullscreen(GameState *game)
         SDL_SetWindowFullscreen(game->window, 0);
         SDL_SetWindowSize(game->window, game->stored_window_width, game->stored_window_height);
     }
-    
+
     // Atualiza as dimensões atuais
     SDL_GetWindowSize(game->window, &game->current_width, &game->current_height);
-    
+
     // Mantém a resolução lógica baseada no aspect ratio original
     SDL_RenderSetLogicalSize(game->renderer, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+}
+
+// graphics.c
+void load_background(GameState *game) {
+    // Carrega a textura do background
+    SDL_Surface *surface = IMG_Load("assets/images/background.jpg");
+    if (!surface) {
+        printf("Erro ao carregar background: %s\n", IMG_GetError());
+        return;
+    }
+    
+    game->bg_width = surface->w;
+    game->bg_height = surface->h;
+    game->background_texture = SDL_CreateTextureFromSurface(game->renderer, surface);
+    SDL_FreeSurface(surface);
+    
+    if (!game->background_texture) {
+        printf("Erro ao criar textura do background: %s\n", SDL_GetError());
+    }
 }

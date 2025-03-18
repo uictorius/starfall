@@ -62,6 +62,8 @@ void initialize_game(GameState *game)
         exit(1);
     }
 
+    load_background(game);
+
     // Carrega ícone
     char full_icon_path[1024];
     snprintf(full_icon_path, sizeof(full_icon_path), "%s%s", base_path, ICON_PATH);
@@ -146,6 +148,10 @@ void run_game_loop(GameState *game)
 
 void cleanup_game(GameState *game)
 {
+    if (game->background_texture)
+    {
+        SDL_DestroyTexture(game->background_texture);
+    }
     cleanup_audio(game);
     SDL_DestroyRenderer(game->renderer);
     SDL_DestroyWindow(game->window);

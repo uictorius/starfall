@@ -5,5 +5,6 @@
 
 void render_game(GameState *game);
 void render_hud(GameState *game);
+void load_background(GameState *game);
 
 #endif
