@@ -68,6 +68,30 @@ void render_game(GameState *game)
         }
     }
 
+    // Projéteis inimigos
+    for(int i = 0; i < MAX_PROJECTILES; i++) {
+        if(game->projectiles[i].active) {
+            if(game->projectiles[i].is_enemy) {
+                SDL_SetRenderDrawColor(game->renderer, 
+                    game->projectiles[i].color.r,
+                    game->projectiles[i].color.g,
+                    game->projectiles[i].color.b,
+                    game->projectiles[i].color.a);
+            }
+            else {
+                SDL_SetRenderDrawColor(game->renderer, 255, 255, 0, 255);
+            }
+            
+            SDL_Rect proj_rect = {
+                game->projectiles[i].x - game->projectiles[i].radius,
+                game->projectiles[i].y - game->projectiles[i].radius,
+                game->projectiles[i].radius * 2,
+                game->projectiles[i].radius * 2
+            };
+            SDL_RenderFillRect(game->renderer, &proj_rect);
+        }
+    }
+
     // Desenhar inimigos
     SDL_SetRenderDrawColor(game->renderer, 255, 0, 0, 255);
     for (int i = 0; i < MAX_ENEMIES; i++)
@@ -93,7 +117,7 @@ void render_hud(GameState *game)
     // int text_width, text_height;
 
     // Vidas
-    snprintf(text, sizeof(text), "Vidas: %d", game->player.lives);
+    snprintf(text, sizeof(text), "Vida: %d", game->player.lives);
     SDL_Surface *surface = TTF_RenderText_Solid(game->font, text, (SDL_Color){255, 255, 255, 255});
     SDL_Texture *texture = SDL_CreateTextureFromSurface(game->renderer, surface);
     SDL_Rect dest = {game->current_width - surface->w - 10, 10, surface->w, surface->h};

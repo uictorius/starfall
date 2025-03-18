@@ -15,6 +15,7 @@ typedef struct GameState GameState;
 typedef struct {
     Mix_Chunk* laser_sound;
     Mix_Chunk* explosion_sound;
+    Mix_Chunk* enemy_laser_sound;
 } SoundEffects;
 
 typedef struct {
@@ -37,12 +38,14 @@ struct GameState {
     bool is_fullscreen;
     SoundEffects sounds;
     Music music;
+    float enemy_speed_multiplier;
 };
 
 // Declarações de funções
 void initialize_game(GameState *game);
 void run_game_loop(GameState *game);
 void cleanup_game(GameState *game);
+void update_projectiles(GameState *game);
 
 // Define os paths relativos
 #define ASSETS_DIR "assets"

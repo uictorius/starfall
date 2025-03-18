@@ -109,6 +109,8 @@ void initialize_game(GameState *game)
         printf("Erro ao tocar música: %s\n", Mix_GetError());
     }
 
+    game->enemy_speed_multiplier = 1.5f;
+
     // Inicialização do jogador
     init_player(&game->player, game);
 
@@ -132,6 +134,7 @@ void run_game_loop(GameState *game)
     {
         handle_input(game);
         update_player(&game->player, game);
+        update_projectiles(game);
         update_projectiles(game);
         spawn_enemy(game);
         update_enemies(game);

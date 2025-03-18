@@ -32,7 +32,8 @@ void handle_input(GameState *game)
             game->running = false;
         }
 
-        if (event.type == SDL_MOUSEBUTTONDOWN)
+        if (event.type == SDL_MOUSEBUTTONDOWN ||
+            (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE))
         {
             int mouseX, mouseY;
             SDL_GetMouseState(&mouseX, &mouseY);
