@@ -7,9 +7,9 @@
 A personal C game project developed for study purposes, showcasing a clean, decoupled architecture using the SDL2 library.
 
   <p align="center">
-    <img src="https://github.com/uictorius/starfall/blob/main/screenshots/main-menu.png" alt="Main Menu" width="32%">
-    <img src="https://github.com/uictorius/starfall/blob/main/screenshots/starfall.png" alt="Gameplay" width="32%">
-    <img src="https://github.com/uictorius/starfall/blob/main/screenshots/game-over.png" alt="Game Over Screen" width="32%">
+    <img src="https://raw.githubusercontent.com/uictorius/starfall/dd1dd1e1d66800fcfa4d7c97f5fd92c5d35a94be/screenshots/main-menu.png" alt="Main Menu" width="32%">
+    <img src="https://raw.githubusercontent.com/uictorius/starfall/dd1dd1e1d66800fcfa4d7c97f5fd92c5d35a94be/screenshots/starfall.png" alt="Gameplay" width="32%">
+    <img src="https://raw.githubusercontent.com/uictorius/starfall/dd1dd1e1d66800fcfa4d7c97f5fd92c5d35a94be/screenshots/game-over.png" alt="Game Over Screen" width="32%">
   </p>
 
 ---
