@@ -3,6 +3,7 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/uictorius/starfall/build.yml?branch=main&logo=github)
 ![Language](https://img.shields.io/badge/Language-C-blue.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Release Version](https://img.shields.io/github/v/release/uictorius/starfall?label=version)
 
 A personal C game project developed for study purposes, showcasing a clean, decoupled architecture using the SDL2 library.
 
